@@ -65,6 +65,7 @@ export function AuthProvider({ children }) {
       const loginResponse = await fetch(`${getApiBaseUrl()}/loginCustomers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email: normalizedEmail, password }),
       });
 
@@ -98,6 +99,49 @@ export function AuthProvider({ children }) {
     [persistSession],
   );
 
+  const register = useCallback(async (customerData) => {
+    const response = await fetch(`${getApiBaseUrl()}/registerCustomer`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        ...customerData,
+        email: customerData.email.trim().toLowerCase(),
+      }),
+    });
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(payload?.message ?? "No se pudo iniciar el registro");
+    }
+
+    return payload;
+  }, []);
+
+  const verifyRegistrationCode = useCallback(
+    async ({ verificationCodeRequest }) => {
+      const response = await fetch(
+        `${getApiBaseUrl()}/registerCustomer/verifyCodeEmail`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ verificationCodeRequest }),
+        },
+      );
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload?.message ?? "No se pudo verificar el código");
+      }
+
+      return payload;
+    },
+    [],
+  );
+
   // Cierra sesion en backend y limpia el estado/localStorage en la app.
   const logout = useCallback(async () => {
     try {
@@ -117,10 +161,12 @@ export function AuthProvider({ children }) {
       isBooting,
       isAuthenticated: Boolean(user),
       login,
+      register,
+      verifyRegistrationCode,
       logout,
       apiBaseUrl: getApiBaseUrl(),
     }),
-    [isBooting, login, logout, user],
+    [isBooting, login, logout, register, user, verifyRegistrationCode],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

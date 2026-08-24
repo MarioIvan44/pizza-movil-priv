@@ -4,6 +4,7 @@ import {
   Platform,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import InputEmail from "../components/Inputs/InputEmail";
@@ -11,7 +12,7 @@ import InputPassword from "../components/Inputs/InputPassword";
 import CustomButton from "../components/Buttons/CustomButton";
 import { useLoginForm } from "../hooks/useLoginForm";
 
-export default function LoginScreen() {
+export default function LoginScreen({ onOpenRegister }) {
   const { email, setEmail, password, setPassword, loading, error, submit } =
     useLoginForm();
 
@@ -21,7 +22,7 @@ export default function LoginScreen() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <View style={styles.card}>
-        <Text style={styles.title}>Iniciar sesion</Text>
+        <Text style={styles.title}>Iniciar sesión</Text>
         <Text style={styles.subtitle}>Bienvenido a tu app de pizzas</Text>
 
         <InputEmail
@@ -32,7 +33,7 @@ export default function LoginScreen() {
         />
 
         <InputPassword
-          placeHolder="Contrasena"
+          placeHolder="Contraseña"
           setValor={password}
           contra
           setTextChange={setPassword}
@@ -49,6 +50,13 @@ export default function LoginScreen() {
         ) : null}
 
         <CustomButton textButton="Entrar" actionButton={submit} />
+
+        <View style={styles.registerPrompt}>
+          <Text style={styles.registerText}>No tienes cuenta, </Text>
+          <TouchableOpacity onPress={onOpenRegister}>
+            <Text style={styles.registerLink}>créala aquí</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -91,5 +99,21 @@ const styles = StyleSheet.create({
   },
   loader: {
     marginTop: 10,
+  },
+  registerPrompt: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 18,
+    flexWrap: "wrap",
+  },
+  registerText: {
+    color: "#7A4E32",
+    fontSize: 13,
+  },
+  registerLink: {
+    color: "#C26D3B",
+    fontSize: 13,
+    fontWeight: "700",
   },
 });
