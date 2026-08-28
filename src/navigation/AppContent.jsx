@@ -7,6 +7,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useSplashTimer } from "../hooks/useSplashTimer";
 import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 import RegisterCustomer from "../screens/RegisterCustomer";
 import VerifyCustomerScreen from "../screens/VerifyCustomerScreen";
 import TabMenu from "./TabMenu";
@@ -44,7 +45,16 @@ export default function AppContent() {
       );
     }
 
-    return <LoginScreen onOpenRegister={() => setAuthView("register")} />;
+    if (authView === "forgot") {
+      return <ForgotPasswordScreen onBack={() => setAuthView("login")} />;
+    }
+
+    return (
+      <LoginScreen
+        onOpenRegister={() => setAuthView("register")}
+        onOpenForgot={() => setAuthView("forgot")}
+      />
+    );
   }
 
   return (

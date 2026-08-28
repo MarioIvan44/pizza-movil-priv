@@ -169,6 +169,29 @@ export function AuthProvider({ children }) {
     [isBooting, login, logout, register, user, verifyRegistrationCode],
   );
 
+  const forgotPasswordSendEmail = useCallback(
+    async ({ email }) => {
+      const normalizedEmail = email.trim().toLowerCase();
+
+      const response = await fetch(`${getApiBaseUrl()}/requestCode`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: normalizedEmail }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload?.message ?? "No se pudo enviar el correo de recuperación");
+      }
+
+      return payload;
+    },
+    [],
+  );
+
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

@@ -12,7 +12,7 @@ import InputPassword from "../components/Inputs/InputPassword";
 import CustomButton from "../components/Buttons/CustomButton";
 import { useLoginForm } from "../hooks/useLoginForm";
 
-export default function LoginScreen({ onOpenRegister }) {
+export default function LoginScreen({ onOpenRegister, onOpenForgot }) {
   const { email, setEmail, password, setPassword, loading, error, submit } =
     useLoginForm();
 
@@ -39,9 +39,15 @@ export default function LoginScreen({ onOpenRegister }) {
           setTextChange={setPassword}
         />
 
-        <Text style={styles.forgotPassword}>
-          ¿Olvidaste tu contraseña? <Text style={styles.forgotPasswordLink}>Recuperar</Text>
-        </Text>
+        <View style={styles.forgotPasswordContainer}>
+          <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña? </Text>
+          <TouchableOpacity
+            style={styles.forgotPasswordLink}
+            onPress={onOpenForgot}
+          >
+            <Text style={styles.forgotPasswordLink}>Recuperar</Text>
+          </TouchableOpacity>
+        </View>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
@@ -128,6 +134,12 @@ const styles = StyleSheet.create({
   forgotPasswordLink: {
     color: "#C26D3B",
     fontWeight: "700",
-    marginBottom: "10",
-  }
+  },
+  forgotPasswordContainer: {
+   flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
+    flexWrap: "wrap",
+  },
 });
