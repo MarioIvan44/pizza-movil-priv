@@ -39,6 +39,10 @@ export default function LoginScreen({ onOpenRegister }) {
           setTextChange={setPassword}
         />
 
+        <Text style={styles.forgotPassword}>
+          ¿Olvidaste tu contraseña? <Text style={styles.forgotPasswordLink}>Recuperar</Text>
+        </Text>
+
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         {loading ? (
@@ -116,4 +120,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "700",
   },
+  forgotPassword: {
+    marginTop: 10,
+    fontSize: 13,
+    color: "#7A4E32",
+  },
+  forgotPasswordLink: {
+    color: "#C26D3B",
+    fontWeight: "700",
+    marginBottom: "10",
+  }
 });
