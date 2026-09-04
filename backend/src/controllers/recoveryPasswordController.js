@@ -47,6 +47,13 @@ recoveryPasswordController.requestCode = async (req, res) => {
         user: config.email.user_email,
         pass: config.email.user_password,
       },
+      // family: 4 evita ECONNREFUSED cuando la red local resuelve la IP de
+      // Gmail por IPv6 pero no la enruta bien.
+      // rejectUnauthorized: false evita "unable to verify the first
+      // certificate" cuando un antivirus (Avast, etc.) intercepta el TLS
+      // local con su propio certificado. Solo para entorno de desarrollo.
+      family: 4,
+      tls: { rejectUnauthorized: false },
     });
 
     //#2- ¿Quién lo recibe y como lo recibe?

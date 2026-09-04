@@ -154,6 +154,78 @@ export function AuthProvider({ children }) {
     await clearSessionStorage();
   }, [clearSessionStorage]);
 
+  // Paso 1 de recuperación: solicita el código de recuperación por correo.
+  const forgotPasswordSendEmail = useCallback(async ({ email }) => {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const response = await fetch(
+      `${getApiBaseUrl()}/recoveryPassword/requestCode`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email: normalizedEmail }),
+      },
+    );
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(
+        payload?.message ?? "No se pudo enviar el correo de recuperación",
+      );
+    }
+
+    return payload;
+  }, []);
+
+  // Paso 2 de recuperación: verifica el código recibido por correo.
+  const verifyRecoveryCode = useCallback(async ({ code }) => {
+    const response = await fetch(
+      `${getApiBaseUrl()}/recoveryPassword/verifyCode`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ code }),
+      },
+    );
+
+    const payload = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(payload?.message ?? "Código inválido o vencido");
+    }
+
+    return payload;
+  }, []);
+
+  // Paso 3 de recuperación: define la nueva contraseña del usuario.
+  const resetPassword = useCallback(
+    async ({ newPassword, confirmNewPassword }) => {
+      const response = await fetch(
+        `${getApiBaseUrl()}/recoveryPassword/newPassword`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ newPassword, confirmNewPassword }),
+        },
+      );
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          payload?.message ?? "No se pudo actualizar la contraseña",
+        );
+      }
+
+      return payload;
+    },
+    [],
+  );
+
   // Agrupa y memoiza los valores y funciones compartidas por el contexto.
   const value = useMemo(
     () => ({
@@ -164,33 +236,23 @@ export function AuthProvider({ children }) {
       register,
       verifyRegistrationCode,
       logout,
+      forgotPasswordSendEmail,
+      verifyRecoveryCode,
+      resetPassword,
       apiBaseUrl: getApiBaseUrl(),
     }),
-    [isBooting, login, logout, register, user, verifyRegistrationCode],
+    [
+      isBooting,
+      login,
+      logout,
+      register,
+      user,
+      verifyRegistrationCode,
+      forgotPasswordSendEmail,
+      verifyRecoveryCode,
+      resetPassword,
+    ],
   );
-
-  const forgotPasswordSendEmail = useCallback(
-    async ({ email }) => {
-      const normalizedEmail = email.trim().toLowerCase();
-
-      const response = await fetch(`${getApiBaseUrl()}/requestCode`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email: normalizedEmail }),
-      });
-
-      const payload = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(payload?.message ?? "No se pudo enviar el correo de recuperación");
-      }
-
-      return payload;
-    },
-    [],
-  );
-
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

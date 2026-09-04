@@ -11,7 +11,7 @@ export default function InputPassword({
       style={styles.Input}
       placeholder={placeHolder}
       value={setValor}
-      placeholderTextColor={"#FFF"}
+      placeholderTextColor={"#A77B5D"}
       secureTextEntry={contra}
       onChangeText={setTextChange}
     />

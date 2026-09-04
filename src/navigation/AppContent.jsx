@@ -8,6 +8,8 @@ import { useSplashTimer } from "../hooks/useSplashTimer";
 import SplashScreen from "../screens/SplashScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
+import VerifyRecoveryCodeScreen from "../screens/VerifyRecoveryCodeScreen";
+import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import RegisterCustomer from "../screens/RegisterCustomer";
 import VerifyCustomerScreen from "../screens/VerifyCustomerScreen";
 import TabMenu from "./TabMenu";
@@ -46,7 +48,30 @@ export default function AppContent() {
     }
 
     if (authView === "forgot") {
-      return <ForgotPasswordScreen onBack={() => setAuthView("login")} />;
+      return (
+        <ForgotPasswordScreen
+          onBack={() => setAuthView("login")}
+          onCodeSent={() => setAuthView("forgotVerify")}
+        />
+      );
+    }
+
+    if (authView === "forgotVerify") {
+      return (
+        <VerifyRecoveryCodeScreen
+          onBack={() => setAuthView("forgot")}
+          onVerified={() => setAuthView("forgotReset")}
+        />
+      );
+    }
+
+    if (authView === "forgotReset") {
+      return (
+        <ResetPasswordScreen
+          onBack={() => setAuthView("forgotVerify")}
+          onDone={() => setAuthView("login")}
+        />
+      );
     }
 
     return (

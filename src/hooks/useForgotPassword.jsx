@@ -12,14 +12,16 @@ export function useForgotPassword() {
 
     if (!email.trim()) {
       setError("Debes ingresar un correo electrónico");
-      return;
+      return { ok: false };
     }
 
     try {
       setLoading(true);
       await forgotPasswordSendEmail({ email });
+      return { ok: true };
     } catch (requestError) {
       setError(requestError.message || "No se pudo enviar el correo de recuperación");
+      return { ok: false };
     } finally {
       setLoading(false);
     }

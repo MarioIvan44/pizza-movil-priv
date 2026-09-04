@@ -90,8 +90,10 @@ export function useRegisterCustomerForm(initialData = null) {
 
     try {
       setLoading(true);
+      // El código generado en el backend es hexadecimal (puede incluir
+      // letras a-f) y la comparación es exacta, por eso normalizamos.
       await verifyRegistrationCode({
-        verificationCodeRequest: verificationCode.trim(),
+        verificationCodeRequest: verificationCode.trim().toLowerCase(),
       });
 
       await login({

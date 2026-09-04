@@ -64,9 +64,9 @@ export default function VerifyCustomerScreen({
           placeholder="Código de verificación"
           value={verificationCode}
           onChangeText={setVerificationCode}
-          keyboardType="number-pad"
           placeholderTextColor="#A77B5D"
-          autoCapitalize="characters"
+          autoCapitalize="none"
+          autoCorrect={false}
         />
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}

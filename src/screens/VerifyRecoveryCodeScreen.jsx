@@ -5,20 +5,20 @@ import {
     Platform,
     StyleSheet,
     Text,
+    TextInput,
     View,
 } from "react-native";
 import CustomButton from "../components/Buttons/CustomButton";
-import InputEmail from "../components/Inputs/InputEmail";
-import { useForgotPassword } from "../hooks/useForgotPassword";
+import { useVerifyRecoveryCode } from "../hooks/useVerifyRecoveryCode";
 
-export default function ForgotPasswordScreen({ onBack, onCodeSent }) {
-    const { email, setEmail, loading, error, submit } = useForgotPassword();
+export default function VerifyRecoveryCodeScreen({ onBack, onVerified }) {
+    const { code, setCode, loading, error, submit } = useVerifyRecoveryCode();
 
     const handleSubmit = async () => {
         const result = await submit();
 
-        if (result?.ok && onCodeSent) {
-            onCodeSent(email);
+        if (result?.ok && onVerified) {
+            onVerified();
         }
     };
 
@@ -28,16 +28,21 @@ export default function ForgotPasswordScreen({ onBack, onCodeSent }) {
             behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
             <View style={styles.card}>
-                <Text style={styles.title}>Recuperar contraseña</Text>
+                <Text style={styles.title}>Verifica tu código</Text>
                 <Text style={styles.subtitle}>
-                    Ingresa tu correo electrónico para recuperar tu contraseña
+                    Ingresa el código de 6 caracteres que enviamos a tu correo
+                    electrónico. Vence en 15 minutos.
                 </Text>
 
-                <InputEmail
-                    placeHolder="Correo"
-                    setValor={email}
-                    setTextChange={setEmail}
-                    setEditable={!loading}
+                <TextInput
+                    style={styles.input}
+                    placeholder="Código de recuperación"
+                    value={code}
+                    onChangeText={setCode}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    editable={!loading}
+                    placeholderTextColor="#A77B5D"
                 />
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -50,8 +55,11 @@ export default function ForgotPasswordScreen({ onBack, onCodeSent }) {
                     />
                 ) : null}
 
-                <CustomButton textButton="Recuperar" actionButton={handleSubmit} />
-                <CustomButton textButton="Volver al login" actionButton={onBack} />
+                <CustomButton
+                    textButton="Verificar código"
+                    actionButton={handleSubmit}
+                />
+                <CustomButton textButton="Volver" actionButton={onBack} />
             </View>
         </KeyboardAvoidingView>
     );
@@ -85,6 +93,17 @@ const styles = StyleSheet.create({
         marginBottom: 14,
         fontSize: 14,
         color: "#9A6A47",
+    },
+    input: {
+        backgroundColor: "#FFF",
+        color: "#2A1A10",
+        fontWeight: "600",
+        width: "100%",
+        borderWidth: 1,
+        borderColor: "#DFC9B2",
+        borderRadius: 8,
+        padding: Platform.OS === "ios" ? 15 : 10,
+        marginVertical: 10,
     },
     errorText: {
         marginTop: 4,

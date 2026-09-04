@@ -8,17 +8,26 @@ import {
     View,
 } from "react-native";
 import CustomButton from "../components/Buttons/CustomButton";
-import InputEmail from "../components/Inputs/InputEmail";
-import { useForgotPassword } from "../hooks/useForgotPassword";
+import InputPassword from "../components/Inputs/InputPassword";
+import { useResetPassword } from "../hooks/useResetPassword";
 
-export default function ForgotPasswordScreen({ onBack, onCodeSent }) {
-    const { email, setEmail, loading, error, submit } = useForgotPassword();
+export default function ResetPasswordScreen({ onBack, onDone }) {
+    const {
+        newPassword,
+        setNewPassword,
+        confirmNewPassword,
+        setConfirmNewPassword,
+        loading,
+        error,
+        success,
+        submit,
+    } = useResetPassword();
 
     const handleSubmit = async () => {
         const result = await submit();
 
-        if (result?.ok && onCodeSent) {
-            onCodeSent(email);
+        if (result?.ok && onDone) {
+            onDone();
         }
     };
 
@@ -28,19 +37,27 @@ export default function ForgotPasswordScreen({ onBack, onCodeSent }) {
             behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
             <View style={styles.card}>
-                <Text style={styles.title}>Recuperar contraseña</Text>
+                <Text style={styles.title}>Nueva contraseña</Text>
                 <Text style={styles.subtitle}>
-                    Ingresa tu correo electrónico para recuperar tu contraseña
+                    Crea una nueva contraseña para tu cuenta
                 </Text>
 
-                <InputEmail
-                    placeHolder="Correo"
-                    setValor={email}
-                    setTextChange={setEmail}
-                    setEditable={!loading}
+                <InputPassword
+                    placeHolder="Nueva contraseña"
+                    setValor={newPassword}
+                    contra
+                    setTextChange={setNewPassword}
+                />
+
+                <InputPassword
+                    placeHolder="Confirmar contraseña"
+                    setValor={confirmNewPassword}
+                    contra
+                    setTextChange={setConfirmNewPassword}
                 />
 
                 {error ? <Text style={styles.errorText}>{error}</Text> : null}
+                {success ? <Text style={styles.successText}>{success}</Text> : null}
 
                 {loading ? (
                     <ActivityIndicator
@@ -50,7 +67,10 @@ export default function ForgotPasswordScreen({ onBack, onCodeSent }) {
                     />
                 ) : null}
 
-                <CustomButton textButton="Recuperar" actionButton={handleSubmit} />
+                <CustomButton
+                    textButton="Actualizar contraseña"
+                    actionButton={handleSubmit}
+                />
                 <CustomButton textButton="Volver al login" actionButton={onBack} />
             </View>
         </KeyboardAvoidingView>
@@ -89,6 +109,12 @@ const styles = StyleSheet.create({
     errorText: {
         marginTop: 4,
         color: "#B12929",
+        fontSize: 13,
+        fontWeight: "600",
+    },
+    successText: {
+        marginTop: 4,
+        color: "#1E7A46",
         fontSize: 13,
         fontWeight: "600",
     },

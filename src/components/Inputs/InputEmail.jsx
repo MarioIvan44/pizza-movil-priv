@@ -11,7 +11,7 @@ export default function InputEmail({
       style={styles.Input}
       placeholder={placeHolder}
       value={setValor}
-      placeholderTextColor={"#FFF"}
+      placeholderTextColor={"#A77B5D"}
       onChangeText={setTextChange}
       keyboardType="email-address"
       editable={setEditable}
